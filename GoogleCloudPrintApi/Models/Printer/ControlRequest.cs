@@ -22,7 +22,7 @@ namespace GoogleCloudPrintApi.Models.Printer
         /// <summary>
         /// Legacy job status.
         /// </summary>
-        [Form, Obsolete("please use semantic_state_diff instead")]
+        [Obsolete("please use semantic_state_diff instead") ,FormIgnore]
         public LegacyJobStatus Status { get; set; }
 
         /// <summary>
