@@ -5,7 +5,7 @@
     <AssemblyTitle>GoogleCloudPrintApi</AssemblyTitle>
     <VersionPrefix>1.5.0</VersionPrefix>
     <Authors>Karl Wan</Authors>
-    <TargetFramework>netstandard1.4</TargetFramework>
+    <TargetFrameworks>netstandard1.4;net46</TargetFrameworks>
     <AssemblyName>GoogleCloudPrintApi</AssemblyName>
     <PackageId>GoogleCloudPrintApi</PackageId>
     <PackageTags>Google;Cloud;Print;API</PackageTags>
@@ -44,6 +44,7 @@
     </PackageReference>
     <PackageReference Include="Flurl.Http" Version="1.1.1">
     </PackageReference>
+    <PackageReference Include="microsoft.csharp" Version="4.4.0" />
     <PackageReference Include="Microsoft.NETCore.Portable.Compatibility" Version="1.0.1">
     </PackageReference>
     <PackageReference Include="System.Net.Security" Version="4.3.0" />

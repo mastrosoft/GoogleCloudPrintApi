@@ -33,6 +33,15 @@ namespace GoogleCloudPrintApi
         // Handler for debug logging
         public event EventHandler<string> OnXmppDebugLogging;
 
+        // Handlers for start / stop
+        private bool _started = false;
+
+        public event EventHandler<EventArgs> OnPrinterStarted;
+
+        public event EventHandler<EventArgs> OnPrinterStopped;
+
+        public event EventHandler<EventArgs> OnPing;
+
         #region Constructor & Cleanup
 
         /// <summary>
@@ -46,6 +55,7 @@ namespace GoogleCloudPrintApi
             OnIncomingPrintJobs = null;
             OnXmppDebugLogging?.Invoke(this, "Clean up event handlers.");
             OnXmppDebugLogging = null;
+            
         }
 
         /// <summary>
@@ -65,14 +75,16 @@ namespace GoogleCloudPrintApi
                 _xmppTcpClient.Dispose();
                 _xmppTcpClient = null;
             }
+            _started = false;
+            OnPrinterStopped?.Invoke(this, new EventArgs());
         }
 
         #endregion Constructor & Cleanup
 
         #region Main Connection Creation
 
-        public async Task InitXmppAsync(string xmppJid)
-        {
+        public async Task InitXmppAsync(string xmppJid) { 
+        
             await UpdateTokenAsync().ConfigureAwait(false);
             ConnectConversation = "\n[ConversationBegin]\n";
             try
@@ -139,7 +151,10 @@ namespace GoogleCloudPrintApi
                     if (!await ListenForIncomingJobsAsync().ConfigureAwait(false))
                         await InitXmppAsync(xmppJid).ConfigureAwait(false);
                 }).Start();
-
+                if (!_started) {
+                    OnPrinterStarted?.Invoke(this, new EventArgs());
+                    _started = true;
+                }
                 OnXmppDebugLogging?.Invoke(this, "Xmpp Connection - Ready.");
             }
             catch (GoogleCloudPrintException ex)
@@ -176,6 +191,7 @@ namespace GoogleCloudPrintApi
                 try
                 {
                     OnXmppDebugLogging?.Invoke(this, $"Xmpp Connection - Ping at '{DateTime.Now.ToUniversalTime()}'");
+                    OnPing?.Invoke(this, new EventArgs());
                     // Asnynchronously wait for new xml incoming from google
                     var xmlDoc = await RecieveXmlAsync().ConfigureAwait(false);
                     if (xmlDoc != null && OnIncomingPrintJobs != null)
