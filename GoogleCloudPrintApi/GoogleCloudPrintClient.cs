@@ -27,7 +27,7 @@ namespace GoogleCloudPrintApi
                 c.JsonSerializer = new Flurl.Http.Configuration.NewtonsoftJsonSerializer(new JsonSerializerSettings
                 {
                     ContractResolver = new DefaultContractResolver { NamingStrategy = new SnakeCaseNamingStrategy() },
-                    NullValueHandling = NullValueHandling.Ignore
+                    NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore
                 });
             });
         }

@@ -28,7 +28,7 @@ namespace GoogleCloudPrintApi.Infrastructures
         public static async Task<T> ReceiveJsonButThrowIfFails<T>(this Task<HttpResponseMessage> responseTask)
             => await ReceiveJsonButThrowIfTagExists<T>(responseTask, "\"success\": false").ConfigureAwait(false);
 
-        public static async Task<HttpResponseMessage> PostRequestAsync(this IFlurlClient client, IRequest request, CancellationToken token = default(CancellationToken), bool isMultipart = false)
+        public static async Task<HttpResponseMessage> PostRequestAsync(this IFlurlRequest client, IRequest request, CancellationToken token = default(CancellationToken), bool isMultipart = false)
         {
             // Get all form keys from request
             var keys = request.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
@@ -71,8 +71,8 @@ namespace GoogleCloudPrintApi.Infrastructures
                                  objValue.ToString() : JsonConvert.SerializeObject(ok.GetValue(request), SerializationHelper.SerializationSettings));
                 }
             });
-
-            return isMultipart ? await client.PostMultipartAsync(mp => mp.AddStringParts(form)) : await client.PostUrlEncodedAsync(form, token);
+            // ConfigureAwait was missing...
+            return isMultipart ? await client.PostMultipartAsync(mp => mp.AddStringParts(form)).ConfigureAwait(false) : await client.PostUrlEncodedAsync(form, token).ConfigureAwait(false);
         }
     }
 }
